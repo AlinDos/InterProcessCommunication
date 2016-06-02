@@ -15,18 +15,16 @@ socket.connect( {
   socket.on('data', (data) => {
     
     // Turn JSON text into JS-object
-    task = JSON.parse(data);
+    var task = JSON.parse(data);
     
     // Print our task
     console.log('Data received (by client): ' + task);
     
     // Do some calculations
-    results = task.map((num) => {return num*2});
+    var results = task.map((num) => {return num*2});
     
     // Send our results formatted to JSON to server
     socket.write(JSON.stringify(results));
     
-    // Close socket
-    socket.end();
   });
 });
