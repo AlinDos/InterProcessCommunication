@@ -4,7 +4,7 @@ global.api = api;
 api.net = require('net');
 
 // Numbers to process
-var task = [2, 17, 3, 2, 5, 7, 15, 22, 1, 14, 15, 9, 0, 11];
+var task = [7, 17, 3, 2, 5, 7, 15, 22, 1, 14, 15, 9, 0, 11];
 // Our result
 var results = [];
 
@@ -26,8 +26,12 @@ var server = api.net.createServer((socket) => {
   // Divide task into smaller one for every client
   var length = task.length/clients.length;
   clients.forEach((socket, i) => {
+    
     // Send divided task formatted to JSON to client 
-    socket.write(JSON.stringify(task.slice(length*i, length*(i+1))));
+    socket.write(JSON.stringify(
+      { id: i,
+        data: task.slice(length*i, length*(i+1))}
+    ));
   });
   
   // Listen to data from client
@@ -35,12 +39,12 @@ var server = api.net.createServer((socket) => {
     // Turn JSON text into JS-object 
     var result = JSON.parse(data)
     // Add result to general results
-    results = results.concat(result);
+    results[result.id] = result.data;
     
     // Print result from client
-    console.log('Data received (by server): ' + result);
+    console.log('Data received (by server from ' + result.id + '): ' + result.data);
     // Print our results
-    if (results.length == task.length) {
+    if (results.length == clients.length) {
       console.log('Results: ' + results);
     }
   });
